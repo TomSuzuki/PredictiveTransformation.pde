@@ -59,11 +59,6 @@ class convertingCandidates {
     public int compareTo(Dictionary p1) {
       return this.getBeforeConverting().compareTo(p1.getBeforeConverting());
     }
-
-    // indexOf探索用
-    public String toString() {
-      return beforeConverting.substring(0, 1);
-    }
   }
 
   // 変換のデータを入れるクラス
@@ -102,19 +97,19 @@ class convertingCandidates {
   private String[] PredictiveTransformation(String Target, int num, boolean containTarget) {
     // 例外
     if (Target.equals("")) return containTarget ? new String[] {""} : new String[0];
-    if (num < 0) return new String[0];
+    if (num <= 0) return new String[0];
 
     // データの最初の場所（線形探索）
     // 一つ前が一致ではない＆今が一致の場所を探せばいいので二分探索を使ったほうが早い？
     // そもそも準備段階で１文字目の重複しないリストを作ってそこから探索すればいいのでは？
-    int index = 0;
-    String t = Target.substring(0, 1);
+    int index = 0;  // 検索場所
+    String t = Target.substring(0, 1);  // 何度も呼ぶのは処理に時間がかかるので先に１回だけやっておく
     for (Dictionary d : dictionary) if (d.getBeforeConverting().substring(0, 1).equals(t)) break;
     else index++;
-    if (index == dictionary.size()) return containTarget ? new String[] {Target} : new String[0];
+    if (index == dictionary.size()) return containTarget ? new String[] {Target} : new String[0];  // 位置文字目すら一致するデータが存在しない
 
     // 変数とか
-    ArrayList<Candidates> CandidatesData = new ArrayList<Candidates>();
+    ArrayList<Candidates> CandidatesData = new ArrayList<Candidates>();  // 変換候補を入れておく
 
     // 変換候補を保存
     if (containTarget) CandidatesData.add(new Candidates(Target, 1+Target.length())); // 変換候補を含む場合はデータを追加
@@ -123,7 +118,7 @@ class convertingCandidates {
       int matchedLength = d.matchedLength(Target);
       if (matchedLength == 0) break;  // 並べ替えているので0になった時点で配列に入ることがない
       if (d.getAfterConverting().equals(Target)) continue;  // 変換後がターゲットと全く同じならデータに入れない
-      Candidates tmp = new Candidates(d.getAfterConverting(), matchedLength);
+      Candidates tmp = new Candidates(d.getAfterConverting(), matchedLength);  // 現在のデータを仮の変数に入れておく
       for (int i = CandidatesData.size()-1; i >= -1; i--) { 
         if (i != -1 && tmp.compare(CandidatesData.get(i)) == 0) break;  // 同じ文字列は除外
         if (i != -1 && tmp.compare(CandidatesData.get(i)) > 0 || i == -1) {  // データを入れる場所を決める（一番上まで来たら最も一致しているってこと）
@@ -132,9 +127,9 @@ class convertingCandidates {
           break;
         }
       }
-    } while (++index < dictionary.size());
+    } while (++index < dictionary.size());  // データがなくなるまで繰り返す
 
-    // 返却用に型を変える
+    // 返却用に型を変える（変換候補型配列から文字列型配列へ）
     String[] s = new String [CandidatesData.size()];
     for (int i = 0; i < CandidatesData.size(); i++) s[i] = CandidatesData.get(i).getData();
     return s;
