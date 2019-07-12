@@ -1,7 +1,7 @@
 // デバッグ用
 void setup() {
   // テストデータの設定
-  String[] testData = {"あいす", "ながめのてすとでーた", "m", "てすと", "", "ー", "あ", "ろ"};  // テストデータ
+  String[] testData = {"あいす", "ながめのてすとでーた", "m", "てすと", "", "", "ー", "あ", "ろ", "無"};  // テストデータ
   int num = 32;	// 取得するデータの数
 
   // 辞書データの準備
@@ -18,7 +18,7 @@ void setup() {
     String[] getData = cc.PredictiveTransformation(t, num, false);	// 変換候補の取得
     m = (millis()-m)/1000;
     println("------------------------------------------");
-    println(getData);
+    //println(getData);
     //for (String s : getData) println(s);
     println();
     println("テストデータ：", t);
