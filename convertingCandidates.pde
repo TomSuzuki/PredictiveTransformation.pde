@@ -100,12 +100,19 @@ class convertingCandidates {
     if (num <= 0) return new String[0];
 
     // データの最初の場所（線形探索）
-    // 一つ前が一致ではない＆今が一致の場所を探せばいいので二分探索を使ったほうが早い？
-    // そもそも準備段階で１文字目の重複しないリストを作ってそこから探索すればいいのでは？
+    // 準備段階で１文字目の重複しないリストを作ってそこから探索すればいいのでは？
     int index = 0;  // 検索場所
-    String t = Target.substring(0, 1);  // 何度も呼ぶのは処理に時間がかかるので先に１回だけやっておく
-    for (Dictionary d : dictionary) if (d.getBeforeConverting().substring(0, 1).equals(t)) break;
-    else index++;
+    int top = 0, bottom = dictionary.size();  // 探索用
+    String t = Target.substring(0, 1);  // Targetの１文字目
+    while (true) {
+      index = (top+bottom+1)/2;
+      if (index == 0 || top == bottom) break;
+      String s1 = dictionary.get(index).getBeforeConverting().substring(0, 1);
+      String s2 = dictionary.get(index-1).getBeforeConverting().substring(0, 1);
+      if (s1.equals(t) && !s2.equals(t)) break;
+      if (s1.compareTo(t) >= 0 || s1.equals(t)) bottom = index-1;
+      else top = index+1;
+    }
     if (index == dictionary.size()) return containTarget ? new String[] {Target} : new String[0];  // 位置文字目すら一致するデータが存在しない
 
     // 変数とか
