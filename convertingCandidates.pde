@@ -1,6 +1,6 @@
 import java.util.Collections;
 
-// カプセル化？
+// 変換するやつ
 class convertingCandidates {
 
   // 変数
@@ -13,16 +13,20 @@ class convertingCandidates {
     File[] fileList = new File(dataPath("dic")).listFiles();
     for (File f : fileList) for (String extension : extensions) if (f.getPath().endsWith(extension)) for (String s : loadStrings(f.getAbsolutePath())) {
       String[] dic = split(s, ",");
-      if (dic.length <= 1) continue;
-      dictionary.add(new Dictionary(dic[0], dic[1]));
+      if (dic.length == 2 && !dic[0].equals("")) dictionary.add(new Dictionary(dic[0], dic[1]));
     }
 
     // 並べ替える
     Collections.sort(dictionary);
   }
 
+  // デバッグ用
+  private ArrayList<Dictionary> getDictionary() {
+    return dictionary;
+  }
+
   // 辞書データのクラス
-  class Dictionary  implements Comparable<Dictionary> {
+  class Dictionary implements Comparable<Dictionary> {
 
     // 変数とか
     private String beforeConverting;  // 変換前のデータ
@@ -56,9 +60,9 @@ class convertingCandidates {
       return this.getBeforeConverting().compareTo(p1.getBeforeConverting());
     }
 
-    // デバッグ用
+    // indexOf探索用
     public String toString() {
-      return ""+beforeConverting+","+afterConverting+"";
+      return beforeConverting.substring(0, 1);
     }
   }
 
@@ -95,27 +99,31 @@ class convertingCandidates {
   }
 
   // 変換の関数
-  private String[] PredictiveTransformation(String Target, int num) {
+  private String[] PredictiveTransformation(String Target, int num, boolean containTarget) {
     // 例外
-    num = num - 1;
-    if (Target.equals("")) return new String[] {""};
-    if(num < 0) return new String[0];
+    if (Target.equals("")) return containTarget ? new String[] {""} : new String[0];
+    if (num < 0) return new String[0];
 
-    // データの最初の場所（あとでindexOfに変える）
+    // データの最初の場所（線形探索）
+    // 一つ前が一致ではない＆今が一致の場所を探せばいいので二分探索を使ったほうが早い？
+    // そもそも準備段階で１文字目の重複しないリストを作ってそこから探索すればいいのでは？
     int index = 0;
-    for (Dictionary d : dictionary) if (null != match(d.getBeforeConverting(), "^"+Target.substring(0, 1)+"[.]*")) break;
+    String t = Target.substring(0, 1);
+    for (Dictionary d : dictionary) if (d.getBeforeConverting().substring(0, 1).equals(t)) break;
     else index++;
-    if (index == dictionary.size()) return new String[] {Target};
+    if (index == dictionary.size()) return containTarget ? new String[] {Target} : new String[0];
 
     // 変数とか
     ArrayList<Candidates> CandidatesData = new ArrayList<Candidates>();
 
     // 変換候補を保存
-    for (; index < dictionary.size(); index++) {
+    if (containTarget) CandidatesData.add(new Candidates(Target, 1+Target.length())); // 変換候補を含む場合はデータを追加
+    do {
       Dictionary d = dictionary.get(index);
-      if (d.matchedLength(Target) == 0) break;  // 並べ替えているので0になった時点で配列に入ることがない
+      int matchedLength = d.matchedLength(Target);
+      if (matchedLength == 0) break;  // 並べ替えているので0になった時点で配列に入ることがない
       if (d.getAfterConverting().equals(Target)) continue;  // 変換後がターゲットと全く同じならデータに入れない
-      Candidates tmp = new Candidates(d.getAfterConverting(), d.matchedLength(Target));
+      Candidates tmp = new Candidates(d.getAfterConverting(), matchedLength);
       for (int i = CandidatesData.size()-1; i >= -1; i--) { 
         if (i != -1 && tmp.compare(CandidatesData.get(i)) == 0) break;  // 同じ文字列は除外
         if (i != -1 && tmp.compare(CandidatesData.get(i)) > 0 || i == -1) {  // データを入れる場所を決める（一番上まで来たら最も一致しているってこと）
@@ -124,12 +132,11 @@ class convertingCandidates {
           break;
         }
       }
-    }
+    } while (++index < dictionary.size());
 
     // 返却用に型を変える
-    String[] s = new String [CandidatesData.size()+1];
-    s[0] = Target;  // ターゲットを一番上に入れる（変換候補が変換前と同じ）
-    for (int i = 0; i < CandidatesData.size(); i++) s[i+1] = CandidatesData.get(i).getData();
+    String[] s = new String [CandidatesData.size()];
+    for (int i = 0; i < CandidatesData.size(); i++) s[i] = CandidatesData.get(i).getData();
     return s;
   }
 }
