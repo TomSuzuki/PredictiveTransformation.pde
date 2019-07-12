@@ -10,16 +10,17 @@
 convertingCandidates cc = new convertingCandidates();
 
 // 変換の関数
-String[] cc.PredictiveTransformation(String Target, int num);
+String[] cc.PredictiveTransformation(String Target, int num, boolean containTarget);
 ```
 第1引数（Target）...変換の対象となる文字列です。（アルファベットもしくはひらがなをいれてください）  
 第2引数（num）...返す文字列の数の最大です。多すぎると時間がかかります。（32程度で使うことを想定しています。）  
+第3引数（containTarget）...変換の対象を変換候補に強制的に入れるか指定します。  
 
 ## 例
 ```processing
 void setup(){
   convertingCandidates cc = new convertingCandidates();
-  for (String s : cc.PredictiveTransformation("あ", 32)) println(s);
+  for (String s : cc.PredictiveTransformation("あ", 32, false)) println(s);
 }
 ```
 
