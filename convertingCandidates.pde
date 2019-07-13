@@ -99,8 +99,7 @@ class convertingCandidates {
     if (Target.equals("")) return containTarget ? new String[] {""} : new String[0];
     if (num <= 0) return new String[0];
 
-    // データの最初の場所（線形探索）
-    // 準備段階で１文字目の重複しないリストを作ってそこから探索すればいいのでは？
+    // データの最初の場所（二分探索）
     int index = 0;  // 検索場所
     int top = 0, bottom = dictionary.size();  // 探索用
     String t = Target.substring(0, 1);  // Targetの１文字目
