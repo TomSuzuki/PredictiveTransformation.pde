@@ -14,11 +14,11 @@ class convertingCandidates {
     for (File f : fileList) for (String extension : extensions) if (f.getPath().endsWith(extension)) for (String s : loadStrings(f.getAbsolutePath())) {
       String[] dic = split(s, ",");
       if (dic.length == 2 && !dic[0].equals("")) {
-        dictionary.add(new Dictionary(dic[0], dic[1]));    // メモリ確保に時間がかかる（600万で15秒くらい）
+        dictionary.add(new Dictionary(dic[0], dic[1]));    // メモリ確保に時間がかかる
       }
     }
 
-    // 並べ替える（1000ms程度）
+    // 並べ替える
     Collections.sort(dictionary);
   }
 
@@ -31,23 +31,23 @@ class convertingCandidates {
   class Dictionary implements Comparable<Dictionary> {
 
     // 変数とか
-    private StringBuilder beforeConverting;  // 変換前のデータ
-    private StringBuilder afterConverting;  // 変換後のデータ
+    private String beforeConverting;
+    private String afterConverting;
 
     // コンストラクタ（変換前、変換後）
     public Dictionary(String beforeConverting, String afterConverting) {
-      this.beforeConverting = new StringBuilder(beforeConverting);
-      this.afterConverting = new StringBuilder(afterConverting);
+      this.beforeConverting = beforeConverting;
+      this.afterConverting = afterConverting;
     }
 
     // 変換前のデータを返す
     private String getBeforeConverting() {
-      return beforeConverting.toString();
+      return beforeConverting;
     }
 
     // 変換後のデータを得る
     private String getAfterConverting() {
-      return afterConverting.toString();
+      return afterConverting;
     }
 
     // 一致文字数を返す
