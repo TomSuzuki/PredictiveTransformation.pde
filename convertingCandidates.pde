@@ -7,13 +7,15 @@ class convertingCandidates {
   private ArrayList<Dictionary> dictionary = new ArrayList<Dictionary>();  // 辞書です
 
   // コンストラクタ（毎回データ読んでソートは重いので先にやっておく）
-  public convertingCandidates() {
+  public convertingCandidates() {    
     // データを読み込む
     String[] extensions = {".csv"};
     File[] fileList = new File(dataPath("dic")).listFiles();
     for (File f : fileList) for (String extension : extensions) if (f.getPath().endsWith(extension)) for (String s : loadStrings(f.getAbsolutePath())) {
       String[] dic = split(s, ",");
-      if (dic.length == 2 && !dic[0].equals("")) dictionary.add(new Dictionary(dic[0], dic[1]));
+      if (dic.length == 2 && !dic[0].equals("")) {
+        dictionary.add(new Dictionary(dic[0], dic[1]));    // メモリ確保に時間がかかる
+      }
     }
 
     // 並べ替える
@@ -29,8 +31,8 @@ class convertingCandidates {
   class Dictionary implements Comparable<Dictionary> {
 
     // 変数とか
-    private String beforeConverting;  // 変換前のデータ
-    private String afterConverting;  // 変換後のデータ
+    private String beforeConverting;
+    private String afterConverting;
 
     // コンストラクタ（変換前、変換後）
     public Dictionary(String beforeConverting, String afterConverting) {
@@ -51,13 +53,18 @@ class convertingCandidates {
     // 一致文字数を返す
     private int matchedLength(String Target) {
       int matchedLength = 0;
-      while (Target.substring(0, matchedLength+1).equals(beforeConverting.substring(0, matchedLength+1)) && ++matchedLength < min(beforeConverting.length(), Target.length()));
+      while (Target.substring(0, matchedLength+1).equals(getBeforeConverting().substring(0, matchedLength+1)) && ++matchedLength < min(getBeforeConverting().length(), Target.length()));
       return matchedLength;
     }
 
     // 比較用（並べ替え用）
     public int compareTo(Dictionary p1) {
-      return this.getBeforeConverting().compareTo(p1.getBeforeConverting());
+      return getBeforeConverting().compareTo(p1.getBeforeConverting());
+    }
+
+    // デバッグ用
+    public String toString() {
+      return "["+this.getBeforeConverting()+","+this.getAfterConverting()+"]";
     }
   }
 
