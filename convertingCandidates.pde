@@ -3,19 +3,19 @@ import java.util.Collections;
 // 変換するやつ
 class convertingCandidates {
 
+  // 設定
+  final String[] extensions = {".csv"};  // 読み込むファイルの拡張子です
+  final File[] fileList = new File(dataPath("dic")).listFiles(); // 読み込むファイルのリストです
+
   // 変数
   private ArrayList<Dictionary> dictionary = new ArrayList<Dictionary>();  // 辞書です
 
   // コンストラクタ（毎回データ読んでソートは重いので先にやっておく）
   public convertingCandidates() {    
     // データを読み込む
-    String[] extensions = {".csv"};
-    File[] fileList = new File(dataPath("dic")).listFiles();
     for (File f : fileList) for (String extension : extensions) if (f.getPath().endsWith(extension)) for (String s : loadStrings(f.getAbsolutePath())) {
       String[] dic = split(s, ",");
-      if (dic.length == 2 && !dic[0].equals("")) {
-        dictionary.add(new Dictionary(dic[0], dic[1]));    // メモリ確保に時間がかかる
-      }
+      if (dic.length == 2 && !dic[0].equals("")) dictionary.add(new Dictionary(dic[0], dic[1]));    // メモリ確保に時間がかかる
     }
 
     // 並べ替える
