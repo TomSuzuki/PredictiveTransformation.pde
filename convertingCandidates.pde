@@ -4,8 +4,8 @@ import java.util.Collections;
 class convertingCandidates {
 
   // 設定
-  final private String[] extensions = {".csv"};  // 読み込むファイルの拡張子です
-  final private File[] fileList = new File(dataPath("dic")).listFiles(); // 読み込むファイルのリストです
+  private final String[] extensions = {".csv"};  // 読み込むファイルの拡張子です
+  private final File[] fileList = new File(dataPath("dic")).listFiles(); // 読み込むファイルのリストです
 
   // 変数
   private ArrayList<Dictionary> dictionary = new ArrayList<Dictionary>();  // 辞書です
