@@ -114,6 +114,10 @@ class convertingCandidates {
       if (s1.equals(t) && !s2.equals(t)) break;
       if (s1.compareTo(t) >= 0 || s1.equals(t)) bottom = index-1;
       else top = index+1;
+      if ((index == bottom || index == top) && !s1.equals(t) && !s2.equals(t)) {
+        index = dictionary.size();
+        break;
+      }
     }
     if (index == dictionary.size()) return containTarget ? new String[] {Target} : new String[0];  // 位置文字目すら一致するデータが存在しない
 
