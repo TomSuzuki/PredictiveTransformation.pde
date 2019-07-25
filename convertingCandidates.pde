@@ -4,8 +4,8 @@ import java.util.Collections;
 class convertingCandidates {
 
   // 設定
-  final String[] extensions = {".csv"};  // 読み込むファイルの拡張子です
-  final File[] fileList = new File(dataPath("dic")).listFiles(); // 読み込むファイルのリストです
+  final private String[] extensions = {".csv"};  // 読み込むファイルの拡張子です
+  final private File[] fileList = new File(dataPath("dic")).listFiles(); // 読み込むファイルのリストです
 
   // 変数
   private ArrayList<Dictionary> dictionary = new ArrayList<Dictionary>();  // 辞書です
@@ -28,7 +28,7 @@ class convertingCandidates {
   }
 
   // 辞書データのクラス
-  class Dictionary implements Comparable<Dictionary> {
+  private class Dictionary implements Comparable<Dictionary> {
 
     // 変数とか
     private String beforeConverting;
@@ -61,15 +61,10 @@ class convertingCandidates {
     public int compareTo(Dictionary p1) {
       return getBeforeConverting().compareTo(p1.getBeforeConverting());
     }
-
-    // デバッグ用
-    public String toString() {
-      return "["+this.getBeforeConverting()+","+this.getAfterConverting()+"]";
-    }
   }
 
   // 変換のデータを入れるクラス
-  class Candidates {
+  private class Candidates {
 
     // 変数
     private String data;    // 文字列を入れる
